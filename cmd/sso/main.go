@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/kvartalnovd/sso/internal/app"
 	"github.com/kvartalnovd/sso/internal/config"
 	"github.com/kvartalnovd/sso/internal/lib/logger/handlers/slogpretty"
 )
@@ -19,15 +20,11 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	log.Info(
-		"starting application", slog.Any("config", cfg),
-	)
+	log.Info("starting application", slog.Any("config", cfg))
 
-	log.Debug("debug message")
-	log.Error("error message")
-	log.Warn("warn message")
+	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
 
-	// Todo: init app
+	application.GRPCSrv.MustRun()
 
 	// Todo: run gRPC-server app
 }
